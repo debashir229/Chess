@@ -1,0 +1,115 @@
+#include <iostream> 
+#include <vector>
+#define Size_Of_Chess_Board (8) 
+using namespace std;
+int Chess[Size_Of_Chess_Board][Size_Of_Chess_Board];
+int step[8][2]{ {1, -2}, { 1, 2}, {-1, 2}, {-1, -2}, {2, 1}, {-2, -1}, {2, -1}, {-2, 1} };
+int Horse = 0;
+void Initialization(int x, int y)
+{
+    for (int i = 0; i < Size_Of_Chess_Board; i++)
+    {
+        for (int j = 0; j < Size_Of_Chess_Board; j++)
+        {
+            Chess[i][j] = 0;
+            if (i == y && j == x)
+                Chess[i][j] = ++Horse;
+        }
+    }
+}
+void Print(int arr[][Size_Of_Chess_Board])
+{
+    for (int i = 0; i < Size_Of_Chess_Board; i++)
+    {
+        for (int j = 0; j < Size_Of_Chess_Board; j++)
+            cout << arr[i][j] << "\t  ";
+        cout << endl;
+    }
+    cout << endl;
+}
+int ProbablyStep(int x, int y)
+{
+    int count = 0;
+    for (int i = 0; i < Size_Of_Chess_Board; i++)
+        if (x + step[i][0] < Size_Of_Chess_Board && x + step[i][0] >= 0 && y + step[i][1] < Size_Of_Chess_Board && y + step[i][1] >= 0 && Chess[y + step[i][1]][x + step[i][0]] == 0)
+            count++;
+    return count;
+}
+void Go(int& x, int& y)
+{
+    int temp = rand() % Size_Of_Chess_Board;
+    if (x + step[temp][0] >= 0 && y + step[temp][1] >= 0 && x + step[temp][0] < Size_Of_Chess_Board && y + step[temp][1] < Size_Of_Chess_Board && Chess[y + step[temp][1]][x + step[temp][0]] == 0)
+    {
+        y += step[temp][1];
+        x += step[temp][0];
+        Chess[y][x] = ++Horse;
+    }
+}
+void FindChange(int find, int change)
+{
+    for (int i = 0; i < Size_Of_Chess_Board; i++)
+        for (int j = 0; j < Size_Of_Chess_Board; j++)
+            if (Chess[i][j] == find)
+                Chess[i][j] = change;
+}
+void Euler(int& l, int& h)
+{
+    vector <int> start, stop;
+    int x, y, temp, help;
+    temp = 1;
+    int cnt = 0;
+    for (int i = 0; i < Size_Of_Chess_Board; i++)
+    {
+        for (int j = 0; j < Size_Of_Chess_Board; j++)
+        {
+            if (Chess[i][j] == 1)
+            {
+                y = i;
+                x = j;
+            }
+        }
+    }
+    for (int i = 0; i < Size_Of_Chess_Board; i++)
+    {
+        start.push_back(Chess[y + step[i][1]][x + step[i][0]]);
+        stop.push_back(Chess[h + step[i][1]][l + step[i][0]]);
+    }
+    for (int i = 0; i < start.size(); i++)
+        for (int j = 0; j < stop.size(); j++)
+            if (start[i] - stop[j] == 1)
+                temp = start[i];
+    help = Horse;
+    if (temp != 1)
+    {
+        while (temp != Horse)
+        {
+            FindChange(help, temp);
+            help--;
+            temp++;
+            cnt++;
+            cout << "------" << cnt << endl;
+            Print(Chess);
+        }
+    }
+}
+int main()
+{
+    setlocale(LC_ALL, "ru");
+    srand(time(NULL));
+#pragma region 1 
+    int x, y;
+    cout << "Введите координаты клетки: " << endl;
+    cin >> x >> y;
+    Initialization(x, y);
+    while (Horse != Size_Of_Chess_Board * Size_Of_Chess_Board)
+    {
+        cout << ProbablyStep(x, y) << endl << endl;
+        if (ProbablyStep(x, y) == 0)
+            Euler(x, y);
+        else
+            Go(x, y);
+        Print(Chess);
+    }
+    Print(Chess);
+#pragma endregion 
+}
