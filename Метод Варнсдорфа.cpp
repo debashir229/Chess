@@ -1,4 +1,4 @@
-﻿#include <iostream> 
+#include <iostream> 
 #include <vector>
 #define Size_Of_Chess_Board (8) 
 using namespace std;
@@ -70,7 +70,7 @@ int main()
 {
     setlocale(LC_ALL, "ru");
     srand(time(NULL));
-#pragma region 1 
+#pragma region Task 1 
     int x, y;
     cout << "Введите координаты клетки: " << endl;
     cin >> x >> y;
